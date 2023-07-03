@@ -33,6 +33,16 @@ jobs:
 
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
+      
+      - name: Azure Dev Configuration
+        run: azd config list
+        
+      - name: Azure Dev Provision
+        run: azd config list
+        env:
+          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Azure Dev Provision
         run: azd provision --no-prompt
