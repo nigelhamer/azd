@@ -2,9 +2,5 @@ name: pallethotel-contract
 metadata:
   template: pallethotel-contract@0.0.1-beta
 services:
-  app:
-    project: src/ContractImport
-    language: csharp
-    host: function
 infra:
   provider: terraform
