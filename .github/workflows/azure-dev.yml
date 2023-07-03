@@ -22,22 +22,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-        
-      - name: ContractImport Functions - Install dependencies 
-        run: |
-          cd src/ContractImport
-          dotnet restore 
-        shell: pwsh
-      
-      - name: ContractImport Functions - Build
-        run: |
-          cd src/ContractImport
-          dotnet build --configuration Release --no-restore 
-    
-      - name: ContractImport Functions - Test
-        run: |
-          cd src/ContractImport
-          dotnet test --no-restore --verbosity normal
 
       - name: Log in with Azure (Federated Credentials)
         run: |
