@@ -5,7 +5,7 @@ on:
       - main
       - master
 
-# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+# https://bishenderson.atlassian.net/wiki/spaces/MFS/pages/4718644/Deployment+Security
 permissions:
   id-token: write
   contents: read
@@ -19,33 +19,36 @@ jobs:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
+        
+      - name: ContractImport Functions - Install dependencies 
+        run: |
+          cd src/ContractImport
+          dotnet restore 
+        shell: pwsh
+      
+      - name: ContractImport Functions - Build
+        run: |
+          cd src/ContractImport
+          dotnet build --configuration Release --no-restore 
+    
+      - name: ContractImport Functions - Test
+        run: |
+          cd src/ContractImport
+          dotnet test --no-restore --verbosity normal
 
       - name: Log in with Azure (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
-          azd auth login `
-            --client-id "$Env:AZURE_CLIENT_ID" `
-            --federated-credential-provider "github" `
-            --tenant-id "$Env:AZURE_TENANT_ID"
+           azd auth login `
+             --client-id "$Env:AZURE_CLIENT_ID" `
+             --federated-credential-provider "github" `
+             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
 
-      - name: Log in with Azure (Client Credentials)
-        if: ${{ env.AZURE_CREDENTIALS != '' }}
-        run: |
-          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          Write-Host "::add-mask::$($info.clientSecret)"
-
-          azd auth login `
-            --client-id "$($info.clientId)" `
-            --client-secret "$($info.clientSecret)" `
-            --tenant-id "$($info.tenantId)"
-        shell: pwsh
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Dev Configuration
+        run: azd config set alpha.terraform on 
 
       - name: Azure Dev Provision
         run: azd provision --no-prompt
@@ -54,9 +57,9 @@ jobs:
           AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Azure Dev Deploy
-        run: azd deploy --no-prompt
-        env:
-          AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}
-          AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # - name: Azure Dev Deploy
+      #   run: azd deploy --no-prompt
+      #   env:
+      #     AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}
+      #     AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
+      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
