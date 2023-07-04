@@ -1,6 +1,6 @@
 {
-    "storage_account_name": "${RS_STORAGE_ACCOUNT}",
-    "container_name": "${RS_CONTAINER_NAME}",
+    "storage_account_name": "hamersmith",
+    "container_name": "terraform",
     "key": "azd/azdremotetest.tfstate",
-    "resource_group_name": "${RS_RESOURCE_GROUP}"
+    "resource_group_name": "sandbox-rg"
 }
