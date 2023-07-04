@@ -72,9 +72,7 @@ jobs:
           ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
           ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          TF_VAR_service_name: ${{ vars.SERVICE_NAME }}
-          TF_VAR_environment_name: ${{ vars.AZURE_ENV_NAME }}
-          TF_VAR_location: ${{ vars.AZURE_LOCATION }}
+          SERVICE_NAME: ${{ vars.SERVICE_NAME }}
 
       # - name: Azure Dev Deploy
       #   run: azd deploy --no-prompt
