@@ -1,8 +1,6 @@
 # Configure desired versions of terraform, azurerm provider
 terraform {
   required_version = ">= 1.1.7, < 2.0.0"
-  backend "azurerm" {
-  }
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
