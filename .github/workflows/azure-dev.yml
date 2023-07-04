@@ -29,9 +29,22 @@ jobs:
      #        --client-id "$Env:AZURE_CLIENT_ID" `
      #       --federated-credential-provider "github" `
      #        --tenant-id "$Env:AZURE_TENANT_ID"
-     #   shell: pwsh
+     #   shell: pwsd
+     
+     # Need to do both. Azure CLI set up the context correctly for AZD
+      - name: Log in Azure CLI with Azure (Client Credentials)
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          az login `
+            --service-principal -u "$($info.clientId)" -p "$($info.clientSecret)" `
+            --tenant "$($info.tenantId)" 
+        shell: pwsh
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Log in with Azure (Client Credentials)
+      - name: Log in AZD with Azure (Client Credentials)
         run: |
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           Write-Host "::add-mask::$($info.clientSecret)"
