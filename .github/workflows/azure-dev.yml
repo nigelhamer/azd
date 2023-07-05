@@ -10,24 +10,7 @@ permissions:
   id-token: write
   contents: read
   
-env:
-  # Terraform Environment variables
-  TF_LOG: INFO
 
-  # AZD Environment variables
-  AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
-  # Required for terraforom to pick up service principle auth
-  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-  ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  # We need to do this dynamically
-  # ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-  # Custom Environment variables
-  SERVICE_NAME: ${{ vars.SERVICE_NAME }}
 
 
 jobs:
@@ -36,30 +19,44 @@ jobs:
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     env:
-      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      # Terraform Environment variables
+      TF_LOG: INFO
+
+      # AZD Environment variables
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Required for terraforom to pick up service principle auth
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+
+      # Tech Debt: We should dynamically retrieve this from secrets.AZURE_CREDENTIALS rathet than storing the secrtet in to place
+      # Risk1: We have increased the chance the secret is exposed
+      # Risk2: ARM_CLIENT_SECRET and value in AZURE_CREDENTIALS could get out of sync
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # Custom Environment variables
+      SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+
     steps:
-      - name: Extract Variables
-        run: | 
-          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          Write-Host "::add-mask::$($info.clientSecret)"
+      # - name: Extract Variables
+      #   run: | 
+      #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+      #     Write-Host "::add-mask::$($info.clientSecret)"
 
-          $env:ARM_CLIENT_SECRET=$info.clientSecret
-          Write-Host "ARM_CLIENT_SECRET=$env:ARM_CLIENT_SECRET" >> $env:GITHUB_ENV
+      #     $env:ARM_CLIENT_SECRET=$info.clientSecret
+      #     Write-Host "ARM_CLIENT_SECRET=$env:ARM_CLIENT_SECRET" >> $env:GITHUB_ENV
+      #   shell: pwsh
 
-          $env:NIGEL="Hamer"
-          Write-Host "NIGEL=$env:NIGEL" >> $env:GITHUB_ENV
-        shell: pwsh
+      # - name: Test
+      #   run: | 
+      #     echo $env:ARM_CLIENT_SECRET
 
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
-      - name: Test
-        run: | 
-          echo $env:ARM_CLIENT_SECRET
-          echo $env:NIGEL
-     
      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in Azure CLI with Azure (Client Credentials)
         run: |
