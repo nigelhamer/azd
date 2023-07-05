@@ -44,6 +44,7 @@ jobs:
         run: | 
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}"" >> $GITHUB_ENV
+        shell: pwsh
 
       - name: Checkout
         uses: actions/checkout@v3.5.2
@@ -80,9 +81,11 @@ jobs:
           
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
+        shell: pwsh
 
       - name: Azure Dev Provision
         run: azd provision --no-prompt
+        shell: pwsh
 
 
       # - name: Azure Dev Deploy
