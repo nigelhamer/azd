@@ -14,8 +14,10 @@ jobs:
 
         # Display the environment variable value
         Write-Host "MY_VARIABLE = $env:MY_VARIABLE"
+      shell: pwsh
 
     - name: Use environment variable in next step
       run: |
         # Access the environment variable set in the previous step
         Write-Host "MY_VARIABLE = $env:MY_VARIABLE"
+      shell: pwsh
