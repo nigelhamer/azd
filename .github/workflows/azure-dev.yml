@@ -11,7 +11,21 @@ permissions:
   contents: read
   
 env:
+  # Terraform Environment variables
   TF_LOG: INFO
+
+  # Required for terraforom to pick up service principle auth
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+  # AZD Environment variables
+  AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+
+  # Custom Environment variables
+  SERVICE_NAME: ${{ vars.SERVICE_NAME }}
 
 jobs:
   build:
@@ -25,14 +39,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-
-     # - name: Log in with Azure (Federated Credentials)
-     #   run: |
-     #      azd auth login `
-     #        --client-id "$Env:AZURE_CLIENT_ID" `
-     #       --federated-credential-provider "github" `
-     #        --tenant-id "$Env:AZURE_TENANT_ID"
-     #   shell: pwsd
      
      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in Azure CLI with Azure (Client Credentials)
@@ -46,6 +52,14 @@ jobs:
         shell: pwsh
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # - name: Log in with Azure (Federated Credentials)
+      #   run: |
+      #     azd auth login `
+      #       --client-id "$Env:AZURE_CLIENT_ID" `
+      #       --federated-credential-provider "github" `
+      #       --tenant-id "$Env:AZURE_TENANT_ID"
+      #   shell: pwsd
       
       - name: Log in AZD with Azure (Client Credentials)
         run: |
@@ -65,14 +79,7 @@ jobs:
 
       - name: Azure Dev Provision
         run: azd provision --no-prompt
-        env:
-          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-          ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-          ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+
 
       # - name: Azure Dev Deploy
       #   run: azd deploy --no-prompt
