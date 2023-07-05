@@ -43,7 +43,7 @@ jobs:
       - name: Extract Variables
         run: | 
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          echo "ARM_CLIENT_SECRET=${{ $info.clientId }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${ $info.clientId }" >> $GITHUB_ENV
         shell: pwsh
 
       - name: Checkout
