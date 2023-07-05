@@ -47,13 +47,18 @@ jobs:
 
           $env:ARM_CLIENT_SECRET=$info.clientSecret
           Write-Host "ARM_CLIENT_SECRET=$env:ARM_CLIENT_SECRET" >> $env:GITHUB_ENV
+
+          $env:NIGEL="Hamer"
+          Write-Host "NIGEL=$env:NIGEL" >> $env:GITHUB_ENV
         shell: pwsh
 
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
       - name: Test
-        run: echo $env:ARM_CLIENT_SECRET
+        run: | 
+          echo $env:ARM_CLIENT_SECRET
+          echo $env:NIGEL
      
      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in Azure CLI with Azure (Client Credentials)
