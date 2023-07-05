@@ -45,7 +45,7 @@ jobs:
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           Write-Host "::add-mask::$($info.clientSecret)"
 
-          echo "ARM_CLIENT_SECRET=${ $info.clientSecret }" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$($info.clientSecret)" >> $GITHUB_ENV
         shell: pwsh
 
       - name: Checkout
