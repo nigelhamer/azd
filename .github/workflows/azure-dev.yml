@@ -27,7 +27,8 @@ jobs:
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Required for terraforom to pick up service principle auth
+      # Required for terraform to pick up service principle auth
+      # Needs to be named like this is be picked automatically my terraform
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
@@ -71,6 +72,14 @@ jobs:
             az group list
             pwd 
 
+      - name: Log in with AZD (Federated Credentials)
+        run: |
+          azd auth login `
+            --client-id "$Env:ARM_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:ARM_TENANT_ID"
+        shell: pwsh
+
       # - name: Log in Azure CLI with Azure (Client Credentials)
       #   run: |
       #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
@@ -81,15 +90,7 @@ jobs:
       #       --tenant "$($info.tenantId)" 
       #   shell: pwsh
 
-      - name: Log in with AZD (Federated Credentials)
-        run: |
-          azd auth login `
-            --client-id "$Env:AZURE_CLIENT_ID" `
-            --federated-credential-provider "github" `
-            --tenant-id "$Env:AZURE_TENANT_ID"
-        shell: pwsh
-      
-      # - name: Log in AZD with Azure (Client Credentials)
+        # - name: Log in AZD with Azure (Client Credentials)
       #   run: |
       #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
       #     Write-Host "::add-mask::$($info.clientSecret)"
@@ -99,7 +100,9 @@ jobs:
       #       --client-secret "$($info.clientSecret)" `
       #       --tenant-id "$($info.tenantId)"
       #   shell: pwsh
-          
+
+
+      
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
 
