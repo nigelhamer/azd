@@ -45,14 +45,15 @@ jobs:
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           Write-Host "::add-mask::$($info.clientSecret)"
 
-          echo "ARM_CLIENT_SECRET=$info.clientSecret" >> $GITHUB_ENV
+          ARM_CLIENT_SECRET=$info.clientSecret
+          echo "ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}" >> $GITHUB_ENV
         shell: pwsh
 
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
       - name: Test
-        run: echo $ARM_CLIENT_SECRET
+        run: echo ARM_CLIENT_SECRET
      
      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in Azure CLI with Azure (Client Credentials)
