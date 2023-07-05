@@ -87,11 +87,11 @@ jobs:
           
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
-        shell: pwsh
 
       - name: Azure Dev Provision
-        run: azd provision --no-prompt
-        shell: pwsh
+        run: |
+          env
+          azd provision --no-prompt
 
 
       # - name: Azure Dev Deploy
