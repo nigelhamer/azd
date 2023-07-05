@@ -1,0 +1,13 @@
+name: Write to $GITHUB_ENV
+
+on: [push]
+
+jobs:
+  write_to_github_env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set GitHub Environment Variable
+        run: |
+          $env:MY_VARIABLE="Hello, GitHub Actions!"
+          Write-Host "MY_VARIABLE=$env:MY_VARIABLE" >> $env:GITHUB_ENV
