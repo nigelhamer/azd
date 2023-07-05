@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v3.5.2
 
       - name: Test
-        run: echo ARM_CLIENT_SECRET
+        run: echo $env:ARM_CLIENT_SECRET
      
      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in Azure CLI with Azure (Client Credentials)
