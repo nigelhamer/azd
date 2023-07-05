@@ -11,3 +11,4 @@ jobs:
         run: |
           $env:MY_VARIABLE="Hello, GitHub Actions!"
           Write-Host "MY_VARIABLE=$env:MY_VARIABLE" >> $env:GITHUB_ENV
+        shell: pwsh
