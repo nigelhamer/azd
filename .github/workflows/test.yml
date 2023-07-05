@@ -10,14 +10,15 @@ jobs:
     - name: Set environment variable
       run: |
         # Set the environment variable
-        Set-Variable -Name MY_VARIABLE -Value "my value" -Scope 'process'
-
-        # Display the environment variable value
-        Write-Host "MY_VARIABLE = $env:MY_VARIABLE"
+        echo "MY_VARIABLE_NAME=my_variable_value" >> $GITHUB_ENV
       shell: pwsh
 
     - name: Use environment variable in next step
       run: |
-        # Access the environment variable set in the previous step
-        Write-Host "MY_VARIABLE = $env:MY_VARIABLE"
+        echo $MY_VARIABLE_NAME
+      shell: pwsh
+      
+    - name: Env
+      run: |
+        env
       shell: pwsh
