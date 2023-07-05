@@ -14,18 +14,21 @@ env:
   # Terraform Environment variables
   TF_LOG: INFO
 
+  # AZD Environment variables
+  AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
   # Required for terraforom to pick up service principle auth
   ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
   ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-  # AZD Environment variables
-  AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  # We need to do this dynamically
+  # ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
   # Custom Environment variables
   SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+
 
 jobs:
   build:
@@ -37,6 +40,11 @@ jobs:
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     steps:
+      - name: Extract Variables
+        run: | 
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}"" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3.5.2
      
@@ -50,8 +58,6 @@ jobs:
             --service-principal -u "$($info.clientId)" -p "$($info.clientSecret)" `
             --tenant "$($info.tenantId)" 
         shell: pwsh
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       # - name: Log in with Azure (Federated Credentials)
       #   run: |
@@ -71,8 +77,6 @@ jobs:
             --client-secret "$($info.clientSecret)" `
             --tenant-id "$($info.tenantId)"
         shell: pwsh
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
           
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
