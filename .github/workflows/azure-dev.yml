@@ -103,12 +103,12 @@ jobs:
 
       - name: Azure Dev Provision
         run: |
-          terrform --version
+          terraform --version
           
       - name: Azure Dev Provision
         run: |
           cd infra
-          terrform --validate
+          terraform --validate
       
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
