@@ -101,7 +101,14 @@ jobs:
       #       --tenant-id "$($info.tenantId)"
       #   shell: pwsh
 
-
+      - name: Azure Dev Provision
+        run: |
+          terrform --version
+          
+      - name: Azure Dev Provision
+        run: |
+          cd infra
+          terrform --validate
       
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
