@@ -1,19 +1,18 @@
-name: Reusable Deployment
+name: build
 
 on:
+  # support calling this workflow from other workflows
+  # https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#creating-a-reusable-workflow
   workflow_call:
-    inputs:
-      config-path:
-        required: true
-        type: string
-    secrets:
-      token:
-        required: true
+  # support running this workflow on push events
+  # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+  push:
+    branches-ignore: main
 
 jobs:
   deploy:
+    # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idruns-on
     runs-on: ubuntu-latest
-    environment: ${{ env.DEPLOY_ENV }}
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     env:
@@ -33,6 +32,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
+        
+      - name: Download build artifact
+        # https://github.com/actions/download-artifact
+        uses: actions/download-artifact@v2
+        with:
+          # the same name as used in the build workflow
+          name: build-artifact
+          # where to save the artifact
+          # using the same path as in the build workflow "restores" the state from the end of the build workflow
+          path: dist
 
       # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in with AZ CLI (Federated Credentials)
