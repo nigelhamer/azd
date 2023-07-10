@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to DEV
 
 on:
   # support calling this workflow from other workflows
