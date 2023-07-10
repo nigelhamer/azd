@@ -16,11 +16,11 @@ jobs:
   use-build:
     # adapt to point to the current repo
     # https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#calling-a-reusable-workflow
-    uses: .github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
     # that's all - jobs that call a reusable workflow can do nothing else
     
   use-deploy:
     # only run the 'deploy' job if the 'use-build' job passes
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idneeds
     needs: use-build
-    uses: .github/workflows/deploy.yml@main
+    uses: ./.github/workflows/deploy.yml
