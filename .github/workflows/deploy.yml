@@ -1,13 +1,19 @@
-name: Deploy to ${{ env.DEPLOY_ENV }}
+name: Reusable Deployment
 
 on:
-  push:
-    branches:
-      - ${{ env.DEPLOY_BRANCH }}
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ env.DEPLOY_ENV }}
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     env:
@@ -28,7 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
-     # Need to do both. Azure CLI set up the context correctly for AZD
+      # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in with AZ CLI (Federated Credentials)
         uses: azure/login@v1
         with:
