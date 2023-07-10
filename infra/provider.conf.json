@@ -2,5 +2,8 @@
     "storage_account_name": "${RS_STORAGE_ACCOUNT}",
     "container_name": "${RS_CONTAINER_NAME}",
     "key": "contract/remotetest.tfstate",
-    "resource_group_name": "${RS_RESOURCE_GROUP}"
+    "resource_group_name": "${RS_RESOURCE_GROUP}",
+    "subscription_id": "${ARM_SUBSCRIPTION_ID}",
+    "tenant_id": "${ARM_TENANT_ID}",
+    "use_oidc": "true"
 }
