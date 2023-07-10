@@ -33,15 +33,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
         
-      - name: Download build artifact
-        # https://github.com/actions/download-artifact
-        uses: actions/download-artifact@v2
-        with:
-          # the same name as used in the build workflow
-          name: build-artifact
-          # where to save the artifact
-          # using the same path as in the build workflow "restores" the state from the end of the build workflow
-          path: dist
+      #- name: Download build artifact
+      #  # https://github.com/actions/download-artifact
+      #  uses: actions/download-artifact@v2
+      #  with:
+      #    # the same name as used in the build workflow
+      #    name: build-artifact
+      #    # where to save the artifact
+      #    # using the same path as in the build workflow "restores" the state from the end of the build workflow
+      #    path: dist
 
       # Need to do both. Azure CLI set up the context correctly for AZD
       - name: Log in with AZ CLI (Federated Credentials)
