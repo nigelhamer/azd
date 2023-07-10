@@ -62,7 +62,13 @@ jobs:
         shell: pwsh
 
       - name: Azure Dev Configuration
-        run: azd config set alpha.terraform on 
+        run: | 
+          env
+          azd env select $Env:AZURE_ENV_NAME
+          azd env list
+          azd config set alpha.terraform on 
+          azd config list
+
 
       - name: Azure Dev Provision
         run: |
