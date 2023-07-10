@@ -100,8 +100,6 @@ resource "azurerm_linux_function_app" "functionapp" {
     "FUNCTIONS_EXTENSION_VERSION"    = "~4"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.appinsights.instrumentation_key,
     "ContainerName"                  = "pallethotel-contract",
-    "CosmosDBPrimaryKey"             = azurerm_cosmosdb_account.cosmosdb.primary_key,
-    "CosmosDBConnection"             = azurerm_cosmosdb_account.cosmosdb.primary_sql_connection_string
   }
   site_config {
   }
