@@ -80,42 +80,12 @@ jobs:
             --tenant-id "$Env:ARM_TENANT_ID"
         shell: pwsh
 
-      # - name: Log in Azure CLI with Azure (Client Credentials)
-      #   run: |
-      #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-      #     Write-Host "::add-mask::$($info.clientSecret)"
-
-      #     az login `
-      #       --service-principal -u "$($info.clientId)" -p "$($info.clientSecret)" `
-      #       --tenant "$($info.tenantId)" 
-      #   shell: pwsh
-
-        # - name: Log in AZD with Azure (Client Credentials)
-      #   run: |
-      #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-      #     Write-Host "::add-mask::$($info.clientSecret)"
-
-      #     azd auth login `
-      #       --client-id "$($info.clientId)" `
-      #       --client-secret "$($info.clientSecret)" `
-      #       --tenant-id "$($info.tenantId)"
-      #   shell: pwsh
-
-      - name: Azure Dev Provision
-        run: |
-          terraform --version
-          
-      - name: Azure Dev Provision
-        run: |
-          cd infra
-          terraform --validate
       
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
 
       - name: Azure Dev Provision
         run: |
-          env
           azd provision --no-prompt
 
 
