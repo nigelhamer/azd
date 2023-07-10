@@ -63,6 +63,7 @@ jobs:
 
       - name: Azure Dev Configuration
         run: | 
+          env
           azd env select $Env:AZURE_ENV_NAME
           azd env list
           azd config set alpha.terraform on 
