@@ -1,6 +1,6 @@
 locals {
   product_prefix = "ph"
-  tags           = { azd-env-name : var.environment_name }
+  tags           = { azd-env-name : lower(var.environment_name) }
   sha            = base64encode(sha256("${var.environment_name}${var.location}${data.azurerm_client_config.current.subscription_id}"))
   resource_token = substr(replace(lower(local.sha), "[^A-Za-z0-9_]", ""), 0, 13)
 }
@@ -9,7 +9,7 @@ locals {
 resource "azurecaf_name" "rg_name" {
   name          = "${local.product_prefix}-${var.service_name}"
   resource_type = "azurerm_resource_group"
-  suffixes      = [var.environment_name]
+  suffixes      = [lower(var.environment_name)]
   random_length = 0
   clean_input   = true
 }
@@ -17,7 +17,7 @@ resource "azurecaf_name" "rg_name" {
 resource "azurecaf_name" "appinsights_name" {
   name          = "${local.product_prefix}-${var.service_name}"
   resource_type = "azurerm_application_insights"
-  suffixes      = [var.environment_name]
+  suffixes      = [lower(var.environment_name)]
   random_length = 0
   clean_input   = true
 }
@@ -25,7 +25,7 @@ resource "azurecaf_name" "appinsights_name" {
 resource "azurecaf_name" "appserviceplan_name" {
   name          = "${local.product_prefix}-${var.service_name}"
   resource_type = "azurerm_app_service"
-  suffixes      = [var.environment_name]
+  suffixes      = [lower(var.environment_name)]
   random_length = 0
   clean_input   = true
 }
@@ -33,7 +33,7 @@ resource "azurecaf_name" "appserviceplan_name" {
 resource "azurecaf_name" "functionapp_name" {
   name          = "${local.product_prefix}-${var.service_name}"
   resource_type = "azurerm_app_service"
-  suffixes      = [var.environment_name]
+  suffixes      = [lower(var.environment_name)]
   random_length = 0
   clean_input   = true
 }
@@ -41,7 +41,7 @@ resource "azurecaf_name" "functionapp_name" {
 resource "azurecaf_name" "storageacc_name" {
   name          = "${local.product_prefix}-${var.service_name}"
   resource_type = "azurerm_storage_account"
-  suffixes      = [var.environment_name]
+  suffixes      = [lower(var.environment_name)]
   random_length = 0
   clean_input   = true
 }
