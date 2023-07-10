@@ -13,12 +13,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: DEV
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     env:
-      # Terraform Environment variables
-      TF_LOG: INFO
-
       # AZD Environment variables
       AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
