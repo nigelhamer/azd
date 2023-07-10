@@ -10,9 +10,6 @@ permissions:
   id-token: write
   contents: read
   
-
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +22,6 @@ jobs:
       # AZD Environment variables
       AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Required for terraform to pick up service principle auth
       # Needs to be named like this is be picked automatically my terraform
@@ -33,28 +29,10 @@ jobs:
       ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
 
-      # Tech Debt: We should dynamically retrieve this from secrets.AZURE_CREDENTIALS rathet than storing the secrtet in to place
-      # Risk1: We have increased the chance the secret is exposed
-      # Risk2: ARM_CLIENT_SECRET and value in AZURE_CREDENTIALS could get out of sync
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-
       # Custom Environment variables
       SERVICE_NAME: ${{ vars.SERVICE_NAME }}
 
     steps:
-      # - name: Extract Variables
-      #   run: | 
-      #     $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-      #     Write-Host "::add-mask::$($info.clientSecret)"
-
-      #     $env:ARM_CLIENT_SECRET=$info.clientSecret
-      #     Write-Host "ARM_CLIENT_SECRET=$env:ARM_CLIENT_SECRET" >> $env:GITHUB_ENV
-      #   shell: pwsh
-
-      # - name: Test
-      #   run: | 
-      #     echo $env:ARM_CLIENT_SECRET
-
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
@@ -65,12 +43,6 @@ jobs:
             client-id: ${{ vars.AZURE_CLIENT_ID }}
             tenant-id: ${{ vars.AZURE_TENANT_ID }}
             subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  
-      - name: 'Run Azure CLI commands'
-        run: |
-            az account show
-            az group list
-            pwd 
 
       - name: Log in with AZD (Federated Credentials)
         run: |
@@ -79,7 +51,6 @@ jobs:
             --federated-credential-provider "github" `
             --tenant-id "$Env:ARM_TENANT_ID"
         shell: pwsh
-
       
       - name: Azure Dev Configuration
         run: azd config set alpha.terraform on 
@@ -87,7 +58,6 @@ jobs:
       - name: Azure Dev Provision
         run: |
           azd provision --no-prompt
-
 
       # - name: Azure Dev Deploy
       #   run: azd deploy --no-prompt
