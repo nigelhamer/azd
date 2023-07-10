@@ -1,4 +1,4 @@
-name: build
+name: Deploy
 
 on:
   # support calling this workflow from other workflows
