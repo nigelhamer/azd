@@ -24,15 +24,15 @@ jobs:
         
       # upload the artifact for use in either CD
       # here, the 'dist' directory is compressed and uploaded to GitHub asset storage as 'build-artifact'
-      - name: Upload artifact
-        # https://github.com/actions/upload-artifact
-        uses: actions/upload-artifact@v2
-        with:
-          # the name to save the compressed asset as
-          name: build-artifact
-          # the directory or file to upload. adapt to your needs
-          path: dist
-          # the artifact is only needed for the duration of the build-deploy workflow
-          # adapt to your needs
-          # https://github.com/actions/upload-artifact#retention-period
-          retention-days: 1
+      #- name: Upload artifact
+      #  # https://github.com/actions/upload-artifact
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    # the name to save the compressed asset as
+      #    name: build-artifact
+      #    # the directory or file to upload. adapt to your needs
+      #    path: dist
+      #   # the artifact is only needed for the duration of the build-deploy workflow
+      #   # adapt to your needs
+      #   # https://github.com/actions/upload-artifact#retention-period
+      #   retention-days: 1
