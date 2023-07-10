@@ -19,8 +19,14 @@ jobs:
     uses: ./.github/workflows/build.yml
     # that's all - jobs that call a reusable workflow can do nothing else
     
-  use-deploy:
+  use-deploy-dev:
     # only run the 'deploy' job if the 'use-build' job passes
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idneeds
     needs: use-build
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-dev.yml
+    
+  use-deploy-test:
+    # only run the 'deploy' job if the 'use-build' job passes
+    # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idneeds
+    needs: use-deploy-dev
+    uses: ./.github/workflows/deploy-test.yml
