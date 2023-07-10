@@ -17,7 +17,7 @@ jobs:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     env:
       # AZD Environment variables
-      AZURE_ENV_NAME: ${{ env.DEPLOY_ENV }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
 
       # Required for terraform to pick up service principle auth
