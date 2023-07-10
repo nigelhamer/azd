@@ -1,3 +1,5 @@
+name: Deploy Workflow
+
 on:
   workflow_dispatch:
   push:
@@ -11,55 +13,17 @@ permissions:
   contents: read
   
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment: DEV
-    container:
-      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+  deploy_dev:
+    name: Deploy to Development
     env:
-      # AZD Environment variables
-      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      DEPLOY_ENV: DEV
+      DEPLOY_BRANCH: main
+    uses: ./.github/workflows/deploy.yml
 
-      # Required for terraform to pick up service principle auth
-      # Needs to be named like this is be picked automatically my terraform
-      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-
-      # Custom Environment variables
-      SERVICE_NAME: ${{ vars.SERVICE_NAME }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3.5.2
-
-     # Need to do both. Azure CLI set up the context correctly for AZD
-      - name: Log in with AZ CLI (Federated Credentials)
-        uses: azure/login@v1
-        with:
-            client-id: ${{ vars.AZURE_CLIENT_ID }}
-            tenant-id: ${{ vars.AZURE_TENANT_ID }}
-            subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Log in with AZD (Federated Credentials)
-        run: |
-          azd auth login `
-            --client-id "$Env:ARM_CLIENT_ID" `
-            --federated-credential-provider "github" `
-            --tenant-id "$Env:ARM_TENANT_ID"
-        shell: pwsh
+  deploy_staging:
+    name: Deploy to Staging
+    env:
+      DEPLOY_ENV: TEST
+      DEPLOY_BRANCH: main
+    uses: ./.github/workflows/deploy.yml
       
-      - name: Azure Dev Configuration
-        run: azd config set alpha.terraform on 
-
-      - name: Azure Dev Provision
-        run: |
-          azd provision --no-prompt
-
-      # - name: Azure Dev Deploy
-      #   run: azd deploy --no-prompt
-      #   env:
-      #     AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}
-      #     AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
-      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
