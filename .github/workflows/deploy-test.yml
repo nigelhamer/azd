@@ -1,0 +1,76 @@
+name: Deploy to TEST
+
+on:
+  # support calling this workflow from other workflows
+  # https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#creating-a-reusable-workflow
+  workflow_call:
+  # support running this workflow on push events
+  # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+  push:
+    branches-ignore: main
+
+jobs:
+  deploy:
+    # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: ubuntu-latest
+    environment: 
+      name: TEST
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    env:
+      # AZD Environment variables
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+
+      # Required for terraform to pick up service principle auth
+      # Needs to be named like this is be picked automatically my terraform
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+
+      # Custom Environment variables
+      SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+        
+      #- name: Download build artifact
+      #  # https://github.com/actions/download-artifact
+      #  uses: actions/download-artifact@v2
+      #  with:
+      #    # the same name as used in the build workflow
+      #    name: build-artifact
+      #    # where to save the artifact
+      #    # using the same path as in the build workflow "restores" the state from the end of the build workflow
+      #    path: dist
+
+      # Need to do both. Azure CLI set up the context correctly for AZD
+      - name: Log in with AZ CLI (Federated Credentials)
+        uses: azure/login@v1
+        with:
+            client-id: ${{ vars.AZURE_CLIENT_ID }}
+            tenant-id: ${{ vars.AZURE_TENANT_ID }}
+            subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in with AZD (Federated Credentials)
+        run: |
+          azd auth login `
+            --client-id "$Env:ARM_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:ARM_TENANT_ID"
+        shell: pwsh
+
+      - name: Azure Dev Configuration
+        run: azd config set alpha.terraform on 
+
+      - name: Azure Dev Provision
+        run: |
+          azd provision --no-prompt
+
+      # - name: Azure Dev Deploy
+      #   run: azd deploy --no-prompt
+      #   env:
+      #     AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}
+      #     AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
+      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
